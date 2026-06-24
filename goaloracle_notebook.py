@@ -11,7 +11,7 @@
 # Los Goles Esperados (xG) de los modelos 1 y 2 se promedian, se construye una **matriz de
 # probabilidades 8x8** y se genera un **dashboard de visualización**.
 #
-# > **Escenario de prueba final:** `Mexico` (local) vs `Czech Republic` (visitante), cancha **neutral**.
+# > **Escenario de prueba final:** `Qatar` (local) vs `Bosnia and Herzegovina` (visitante), cancha **neutral**.
 
 # %% [markdown]
 # ## 1. Entorno y librerías
@@ -316,9 +316,14 @@ def modelo_bayesiano(df: pd.DataFrame, draws: int = 1000, tune: int = 1000,
         pm.Poisson("away_goals", mu=pm.math.exp(log_la), observed=as_)
 
         # --- Inferencia ---
-        trace = pm.sample(draws=draws, tune=tune, chains=chains,
-                          target_accept=target_accept, random_seed=seed,
-                          progressbar=True)
+        trace = pm.sample(
+            draws=max(draws, 2000),                  # más muestras posteriores -> mayor ESS
+            tune=max(tune, 2000),                    # más calentamiento/adaptación del NUTS
+            chains=chains,
+            target_accept=max(target_accept, 0.95),  # pasos más finos -> menos autocorrelación
+            random_seed=seed,
+            progressbar=True,
+        )
 
     return modelo, trace, idx
 
@@ -490,7 +495,7 @@ def resumen_resultados(M):
 
 # %%
 def _abrev(nombre: str) -> str:
-    """Abreviatura de 3 letras en mayúsculas (p. ej. 'Mexico' -> 'MEX')."""
+    """Abreviatura de 3 letras en mayúsculas (p. ej. 'Qatar' -> 'QAT')."""
     return nombre[:3].upper()
 
 
@@ -550,7 +555,7 @@ def dashboard(M, home: str, away: str, lh: float, la: float):
 # Orquesta todo el flujo: datos → features → modelos → combinación de xG → matriz → dashboard.
 
 # %%
-def ejecutar_pipeline(home: str = "Mexico", away: str = "Czech Republic", neutral: bool = True,
+def ejecutar_pipeline(home: str = "Qatar", away: str = "Bosnia and Herzegovina", neutral: bool = True,
                       draws: int = 1000, chains: int = 2):
     """Ejecuta el pipeline completo y devuelve un diccionario con todos los artefactos."""
     print("=" * 70)
@@ -607,6 +612,6 @@ def ejecutar_pipeline(home: str = "Mexico", away: str = "Czech Republic", neutra
 
 
 if __name__ == "__main__":
-    # Escenario: Mexico (local) vs Czech Republic (visitante), cancha neutral.
-    # Si quieres que Mexico juegue con ventaja de localia real, usa neutral=False.
-    resultados = ejecutar_pipeline(home="Mexico", away="Czech Republic", neutral=True)
+    # Escenario: Qatar (local) vs Bosnia and Herzegovina (visitante), cancha neutral.
+    # Si quieres que Qatar juegue con ventaja de localia real, usa neutral=False.
+    resultados = ejecutar_pipeline(home="Qatar", away="Bosnia and Herzegovina", neutral=True)

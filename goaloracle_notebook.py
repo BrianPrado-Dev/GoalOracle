@@ -11,7 +11,7 @@
 # Los Goles Esperados (xG) de los modelos 1 y 2 se promedian, se construye una **matriz de
 # probabilidades 8x8** y se genera un **dashboard de visualización**.
 #
-# > **Escenario de prueba final:** `Brazil` (local) vs `Haiti` (visitante), cancha **neutral**.
+# > **Escenario de prueba final:** `Mexico` (local) vs `Czech Republic` (visitante), cancha **neutral**.
 
 # %% [markdown]
 # ## 1. Entorno y librerías
@@ -490,7 +490,7 @@ def resumen_resultados(M):
 
 # %%
 def _abrev(nombre: str) -> str:
-    """Abreviatura de 3 letras en mayúsculas (p. ej. 'Brazil' -> 'BRA')."""
+    """Abreviatura de 3 letras en mayúsculas (p. ej. 'Mexico' -> 'MEX')."""
     return nombre[:3].upper()
 
 
@@ -550,7 +550,7 @@ def dashboard(M, home: str, away: str, lh: float, la: float):
 # Orquesta todo el flujo: datos → features → modelos → combinación de xG → matriz → dashboard.
 
 # %%
-def ejecutar_pipeline(home: str = "Brazil", away: str = "Haiti", neutral: bool = True,
+def ejecutar_pipeline(home: str = "Mexico", away: str = "Czech Republic", neutral: bool = True,
                       draws: int = 1000, chains: int = 2):
     """Ejecuta el pipeline completo y devuelve un diccionario con todos los artefactos."""
     print("=" * 70)
@@ -607,5 +607,6 @@ def ejecutar_pipeline(home: str = "Brazil", away: str = "Haiti", neutral: bool =
 
 
 if __name__ == "__main__":
-    # Escenario de prueba solicitado: Brazil (local) vs Haiti (visitante), cancha neutral.
-    resultados = ejecutar_pipeline(home="Brazil", away="Haiti", neutral=True)
+    # Escenario: Mexico (local) vs Czech Republic (visitante), cancha neutral.
+    # Si quieres que Mexico juegue con ventaja de localia real, usa neutral=False.
+    resultados = ejecutar_pipeline(home="Mexico", away="Czech Republic", neutral=True)
